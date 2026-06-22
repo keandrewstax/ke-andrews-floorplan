@@ -482,7 +482,7 @@ async function loadSVG(floor) {
 
 async function loadRoster() {
   try {
-    const res = await fetch(BASE_URL + 'Roster_(KEA).xlsx');
+    const res = await fetch(BASE_URL + 'Roster.xlsx');
     if (!res.ok) throw new Error('Roster not found');
     const buffer = await res.arrayBuffer();
     const wb = XLSX.read(buffer, { type: 'array' });
@@ -490,7 +490,7 @@ async function loadRoster() {
     const rows = XLSX.utils.sheet_to_json(ws, { header: 1 });
     parseRoster(rows);
   } catch(e) {
-    document.getElementById('file-status').textContent = 'Roster_(KEA).xlsx not found in repo';
+    document.getElementById('file-status').textContent = 'Roster.xlsx not found in repo';
   }
 }
 
