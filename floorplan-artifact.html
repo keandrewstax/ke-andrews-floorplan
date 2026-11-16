@@ -490,7 +490,8 @@ async function loadRoster() {
     const rows = XLSX.utils.sheet_to_json(ws, { header: 1 });
     parseRoster(rows);
   } catch(e) {
-    document.getElementById('file-status').textContent = 'Roster.xlsx not found in repo';
+    console.error('Roster load failed:', e);
+    document.getElementById('file-status').textContent = 'Roster failed to load: ' + e.message;
   }
 }
 
@@ -502,8 +503,11 @@ function parseRoster(rows) {
     const pi = row.findIndex(c => c.includes('preferred'));
     const ni = row.findIndex(c => (c.includes('last') && c.includes('first')) || c === 'last name, first name');
     const oi = row.findIndex(c => c.includes('office number'));
-    const di = row.findIndex(c => c.includes('department'));
-    const dvi = row.findIndex(c => c.includes('division'));
+    let di = row.findIndex(c => c.includes('department'));
+    let dvi = row.findIndex(c => c.includes('division'));
+    // The roster may label this column either "Department" or "Division".
+    // If only one exists, use it as the department; if both exist, keep both.
+    if (di === -1 && dvi !== -1) { di = dvi; dvi = -1; }
     if (ni !== -1 && oi !== -1 && di !== -1) {
       headerRow = i; preferredCol = pi; fullNameCol = ni; officeCol = oi; deptCol = di; divisionCol = dvi;
       break;
